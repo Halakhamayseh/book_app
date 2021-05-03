@@ -4,7 +4,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const superagent = require('superagent');
-
+const pg = require('pg');
 //app setup
 const server = express();
 server.use(cors());
@@ -25,9 +25,13 @@ function newHandler(req, res) {
     res.render('pages/searches/new');
 }
 function searchesHandler(req, res) {
-    let q = req.body;//ask to know it //
-    console.log(q);
-    let url = `https://www.googleapis.com/books/v1/volumes?q=search+terms&maxResults=10`
+    let q = req.body.radio;
+    let search = req.body.value;
+    // it how to search about author or title and but in url link  //
+    console.log(q,search);
+    // let url = `https://www.googleapis.com/books/v1/volumes?q=search+terms&maxResults=10`
+    //https://www.googleapis.com/books/v1/volumes?q=flowers+inauthor:keyes//
+    let url = `https://www.googleapis.com/books/v1/volumes?q=search+${q}:${search}&maxResults=10`//
     superagent.get(url)
         .then(data => {
             let bData = data.body;
@@ -48,7 +52,10 @@ function errorHandler(req, res) {
 }
 //////////constracter
 function Book(obj) {
-    this.urlPhoto = obj.volumeInfo.imageLinks;
+    let urlPhoto1 = obj.volumeInfo.imageLinks.smallThumbnail;
+    let urlPhoto2 = obj.volumeInfo.imageLinks.thumbnail;
+    let urlPhoto3 = `https://i.imgur.com/J5LVHEL.jpg`;
+    this.urlPhoto = urlPhoto1 || urlPhoto2 || urlPhoto3;
     this.title = obj.volumeInfo.title;
     this.author = obj.volumeInfo.authors;
     this.description = obj.volumeInfo.description;
