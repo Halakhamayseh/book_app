@@ -4,7 +4,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const superagent = require('superagent');
-
+const pg = require('pg');
 //app setup
 const server = express();
 server.use(cors());
