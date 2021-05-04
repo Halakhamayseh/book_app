@@ -1,15 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=New+Tegomin&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=New+Tegomin&family=Playfair+Display&display=swap');
-*{
-    box-sizing: border-box;
-    margin: 0;
-}
 header{
-    font-family:New Tegomin;
-    background-color: paleturquoise;
-}
-body{
-    font-family:Playfair Display;
-    background-color: whitesmoke;
-    width: 100%;
+    background-color: bisque;
 }
