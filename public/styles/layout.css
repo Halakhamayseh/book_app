@@ -1,0 +1,27 @@
+/* mopile responsive */
+@media  (min-width:480px)and(max-width:767px) {
+  .show{
+    background-color: black;
+    border: 1px solid gold;
+    color: cornsilk;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-wrap: wrap;
+
+}
+ 
+
+.show p{
+    word-wrap: break-word;
+}
+
+
+/* .show p{
+    text-
+} */
+.show img{
+    width: 300px;
+    height: 200px;
+}
+}
