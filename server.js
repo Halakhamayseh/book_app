@@ -56,6 +56,7 @@ function Book(obj) {
     let urlPhoto2 = obj.volumeInfo.imageLinks.thumbnail;
     let urlPhoto3 = `https://i.imgur.com/J5LVHEL.jpg`;
     this.urlPhoto = urlPhoto1 || urlPhoto2 || urlPhoto3;
+    // this.urlPhoto = book.volumeInfo.imageLinks.thumbnail.replace(/^(http:\/\/)/g, 'https://') || 'https://i.imgur.com/J5LVHEL.jpg'; didnot work
     this.title = obj.volumeInfo.title;
     this.author = obj.volumeInfo.authors;
     this.description = obj.volumeInfo.description;
