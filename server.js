@@ -14,21 +14,21 @@ const PORT = process.env.PORT || 4500
 server.use(express.urlencoded({ extended: true }));
 ///root
 server.get('/home', mainHandler);
-server.get('/searches/show', showHandler);
-server.get('/searches', searchesHandler);
+server.get('/searches/new', newHandler);
+server.post('/searches', searchesHandler);
 server.get('*', errorHandler);
 ///callback funcation
-function mainHandler(req,res) {
+function mainHandler(req, res) {
     res.render('pages/index');
 }
-function showHandler(req, res) {
-    res.render('pages/searches/show');
+function newHandler(req, res) {
+    res.render('pages/searches/new');
 }
 function searchesHandler(req, res) {
     let q = req.body.radio;
     let search = req.body.value;
     // it how to search about author or title and but in url link  //
-    console.log(q,search);
+    console.log(q, search);
     // let url = `https://www.googleapis.com/books/v1/volumes?q=search+terms&maxResults=10`
     //https://www.googleapis.com/books/v1/volumes?q=flowers+inauthor:keyes//
     let url = `https://www.googleapis.com/books/v1/volumes?q=search+${q}:${search}&maxResults=10`//
@@ -38,14 +38,14 @@ function searchesHandler(req, res) {
             // console.log(bData);
             let arr = bData.items.map(e => new Book(e));
             // console.log(arr);
-            res.render('pages/searches/show',{bArr:arr});
-            
+            res.render('pages/searches/show', { bArr: arr });
+
         })
         .catch(error => {
             console.log(error);
             res.send(error);
-    })
-    
+        })
+
 }
 function errorHandler(req, res) {
     res.status(500).render('pages/error');
