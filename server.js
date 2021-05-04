@@ -20,6 +20,7 @@ server.post('/searches', searchesHandler);
 server.get('*', errorHandler);
 ///callback funcation
 function mainHandler(req, res) {
+    console.log('hi');
     let SQL = `SELECT * FROM Book`;
     client.query(SQL)
         .then(result => {
