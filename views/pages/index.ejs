@@ -7,7 +7,21 @@
     <title>Document</title>
     <link rel="stylesheet" href="styles/style.css">
 </head>
-<header>Hello World</header>
-<body>  
+
+<body>
+<header>Book app</header>
+<nav>
+<ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/searches/new">search book</a></li>
+</ul>
+</nav>
+<main>
+    <%bookKey.forEach(item{%>
+        
+<h2><%= bookKey.title</h2>%>
+<h3><%= bookKey.author</h3>%>
+    <% }) %>
+</main>
 </body>
 </html>

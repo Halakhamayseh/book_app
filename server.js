@@ -11,15 +11,22 @@ server.use(cors());
 server.use(express.static('public'));
 server.set('view engine', 'ejs');
 const PORT = process.env.PORT || 4500
+const client = new pg.Client(process.env.DATA_URL);
 server.use(express.urlencoded({ extended: true }));
 ///root
-server.get('/home', mainHandler);
+server.get('/', mainHandler);
 server.get('/searches/new', newHandler);
 server.post('/searches', searchesHandler);
 server.get('*', errorHandler);
 ///callback funcation
-function mainHandler(req,res) {
-    res.render('pages/index');
+function mainHandler(req, res) {
+    let SQL = `SELECT * FROM Book`;
+    client.query(SQL)
+        .then(result => {
+            console.log(result)
+            res.render('pages/index',{bookKey:result.rows});
+    })
+    
 }
 function newHandler(req, res) {
     res.render('pages/searches/new');
@@ -27,10 +34,7 @@ function newHandler(req, res) {
 function searchesHandler(req, res) {
     let q = req.body.radio;
     let search = req.body.value;
-    // it how to search about author or title and but in url link  //
     console.log(q,search);
-    // let url = `https://www.googleapis.com/books/v1/volumes?q=search+terms&maxResults=10`
-    //https://www.googleapis.com/books/v1/volumes?q=flowers+inauthor:keyes//
     let url = `https://www.googleapis.com/books/v1/volumes?q=search+${q}:${search}&maxResults=10`//
     superagent.get(url)
         .then(data => {
