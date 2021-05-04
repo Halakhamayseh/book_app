@@ -16,11 +16,16 @@
     <li><a href="/searches/new">search book</a></li>
 </ul>
 </nav>
+<p>you have <%=bookKey.length%> favorite book</p>
 <main>
-    <%bookKey.forEach(item{%>
-        
-<h2><%= bookKey.title</h2>%>
-<h3><%= bookKey.author</h3>%>
+    <%bookKey.forEach(items=>{ %>
+<img src=" <%= items.image_url%> " alt="" srcset="">
+<h2><%= items.title%></h2>
+<h3><%= items.author%></h3>
+<h4><%= items.isbn%></h4>
+    <!-- <form action="/books/<%=items.id%>"> -->
+        <button>show details</button>
+    </form>
     <% }) %>
 </main>
 </body>
