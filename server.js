@@ -14,20 +14,18 @@ const PORT = process.env.PORT || 4500
 server.use(express.urlencoded({ extended: true }));
 ///root
 server.get('/home', mainHandler);
-server.get('/searches/new', newHandler);
-server.post('/searches', searchesHandler);
+server.get('/searches/show', showHandler);
+server.get('/searches', searchesHandler);
 server.get('*', errorHandler);
 ///callback funcation
 function mainHandler(req,res) {
     res.render('pages/index');
 }
-function newHandler(req, res) {
-    res.render('pages/searches/new');
+function showHandler(req, res) {
+    res.render('pages/searches/show');
 }
 function searchesHandler(req, res) {
-    let q = req.body;//ask to know it //
-    console.log(q);
-    let url = `https://www.googleapis.com/books/v1/volumes?q=search+terms&maxResults=10`
+    let url = `https://www.googleapis.com/books/v1/volumes?q=search+terms`
     superagent.get(url)
         .then(data => {
             let bData = data.body;
