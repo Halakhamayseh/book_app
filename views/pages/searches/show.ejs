@@ -10,11 +10,25 @@
 <body>
     <section class='show'>
         <% bArr.forEach(item=>{%>
-            <img src="<%= item.image_url%>" alt="" srcset="">
-            <h2><%= item.title%></h2>
-            <h2> <%= item.author%></h2>
-            <p><%= item.description%></p>
+        <form action="/books" method="POST">
+          <img src="<%= item.image_url%>" alt="" srcset="">
+            <input type="hidden" name=image_url value="<%=item.image_url%>">
+            <h2>
+                <%= item.title%>
+            </h2>
+            <input type="hidden" name=title value="<%=item.title%>">
+            <h2>
+                <%= item.author%>
+            </h2>
+            <input type="hidden" name=author value="<%=item.author%>">
+            <p>
+                <%= item.description%>
+            </p>
+            <input type="hidden" name=description value="<%=item.description%>">
+            <button>select this book</button>
+        </form>
         <%});%>
     </section>
+
 </body>
 </html>

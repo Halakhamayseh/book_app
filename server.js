@@ -16,7 +16,8 @@ server.use(express.urlencoded({ extended: true }));
 ///root
 server.get('/', mainHandler);
 server.get('/searches/new', newHandler);
-// server.get('/books/:id', idBookHandler);
+server.get('/books/:id', idBookHandler);
+server.post('/books', BookHandler);
 server.post('/searches', searchesHandler);
 server.get('*', errorHandler);
 ///callback funcation
@@ -32,17 +33,41 @@ function mainHandler(req, res) {
 function newHandler(req, res) {
     res.render('pages/searches/new');
 }
+function idBookHandler(req, res) {
+    let SQL = `SELECT * FROM Book WHERE id=$1;`;
+    let safeValue = [req.params.id]
+    client.query(SQL, safeValue)
+        .then(result => {
+            // console.log(result.rows[0]);
+            res.render('pages/books/show', { objectId: result.rows[0] });
+        });
+    
+    
+}
+
+function BookHandler(req, res) {
+    // console.log(req.body);
+    let { image_url, title, author, description } = req.body;
+    let SQL = `INSERT INTO Book (image_url,title,author,description) VALUES ($1,$2,$3,$4) RETURNING *;`;
+    let safeVaules = [image_url, title, author, description]
+    console.log(safeVaules);
+    client.query(SQL, safeVaules)
+        .then(result => {
+            // console.log(result.rows)
+            res.redirect(`/books/${result.rows[0].id}`)
+        });
+}
 function searchesHandler(req, res) {
     let q = req.body.radio;
     let search = req.body.value;
     console.log(q,search);
-    let url = `https://www.googleapis.com/books/v1/volumes?q=search+${q}:${search}&maxResults=10`//
+    let url = `https://www.googleapis.com/books/v1/volumes?q=+${q}:${search}`
     superagent.get(url)
         .then(data => {
             let bData = data.body;
             // console.log(bData);
             let arr = bData.items.map(e => new Book(e));
-            // console.log(arr);
+            console.log(arr);
             res.render('pages/searches/show',{bArr:arr});
             
         })
@@ -61,9 +86,11 @@ function Book(obj) {
     let urlPhoto2 = obj.volumeInfo.imageLinks.thumbnail;
     let urlPhoto3 = `https://i.imgur.com/J5LVHEL.jpg`;
     this.image_url = urlPhoto1 || urlPhoto2 || urlPhoto3;
-    this.title = obj.volumeInfo.title;
-    this.author = obj.volumeInfo.authors;
-    this.description = obj.volumeInfo.description;
+    this.title = obj.volumeInfo.title || 'not found';
+    this.author = obj.volumeInfo.authors ||'not found' ;
+    this.description = obj.volumeInfo.description ||'not found';
+    // this.isbn = obj.volumeInfo.industryIdentifiers.type;
+    // this.bookshelf = obj.volumeInfo.categories[0];
 }
 //port listen
 client.connect()
