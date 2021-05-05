@@ -5,6 +5,7 @@ const express = require('express');
 const cors = require('cors');
 const superagent = require('superagent');
 const pg = require('pg');
+const methodOverride = require('method-override');
 //app setup
 const server = express();
 server.use(cors());
@@ -13,12 +14,15 @@ server.set('view engine', 'ejs');
 const PORT = process.env.PORT || 4500
 const client = new pg.Client(process.env.DATABASE_URL);
 server.use(express.urlencoded({ extended: true }));
+server.use(methodOverride('_method'));
 ///root
 server.get('/', mainHandler);
 server.get('/searches/new', newHandler);
 server.get('/books/:id', idBookHandler);
 server.post('/books', BookHandler);
 server.post('/searches', searchesHandler);
+server.put('/books/:id', updateHandler);
+server.delete('/books/:id', deleteHandler);
 server.get('*', errorHandler);
 ///callback funcation
 function mainHandler(req, res) {
@@ -28,10 +32,40 @@ function mainHandler(req, res) {
         .then(result => {
             // console.log(result)
             res.render('pages/index',{bookKey: result.rows});
-})
+        })
+        .catch(error => {
+            console.log(error);
+            res.render('pages/error');
+        })
 }
 function newHandler(req, res) {
     res.render('pages/searches/new');
+}
+function updateHandler(req, res) {
+    let { image_url, title, author, description } = req.body;
+    let SQL = `UPDATE Book SET title=$1,author=$2,image_url=$3,description=$4 WHERE id=$5;`;
+    let safeValue = [title, author, image_url, description, req.params.id]
+    client.query(SQL,safeValue)
+        .then(()=> {
+            res.redirect(`/books/${req.params.id}`)
+        })
+        .catch(error => {
+            console.log(error);
+            res.render('pages/error');
+        })
+}
+function deleteHandler(req, res) {
+    let { image_url, title, author, description } = req.body;
+    let SQL = `DELETE FROM Book WHERE id=$1;`;
+    let safeValue = [req.params.id]
+    client.query(SQL, safeValue)
+        .then(() => {
+            res.redirect('/')
+        })
+        .catch(error => {
+            console.log(error);
+            res.render('pages/error');
+        })
 }
 function idBookHandler(req, res) {
     let SQL = `SELECT * FROM Book WHERE id=$1;`;
@@ -40,7 +74,11 @@ function idBookHandler(req, res) {
         .then(result => {
             // console.log(result.rows[0]);
             res.render('pages/books/show', { objectId: result.rows[0] });
-        });
+        })
+        .catch(error => {
+            console.log(error);
+            res.render('pages/error');
+        })
     
     
 }
@@ -55,7 +93,11 @@ function BookHandler(req, res) {
         .then(result => {
             // console.log(result.rows)
             res.redirect(`/books/${result.rows[0].id}`)
-        });
+        })
+          .catch (error => {
+        console.log(error);
+        res.render('pages/error');
+    })
 }
 function searchesHandler(req, res) {
     let q = req.body.radio;
@@ -73,7 +115,7 @@ function searchesHandler(req, res) {
         })
         .catch(error => {
             console.log(error);
-            res.send(error);
+            res.render('pages/error');
     })
     
 }
